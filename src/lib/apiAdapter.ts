@@ -86,8 +86,13 @@ async function restApiCall<T>(endpoint: string, params?: any): Promise<T> {
   }
   
   console.log(`[REST API] Processed endpoint: ${processedEndpoint}`);
-  
-  const url = new URL(processedEndpoint, window.location.origin);
+
+  // Use API server on port 8080 in development, or window.location.origin in production
+  const apiBaseUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost'
+    ? 'http://localhost:8080'
+    : window.location.origin;
+
+  const url = new URL(processedEndpoint, apiBaseUrl);
   
   // Add remaining params as query parameters for GET requests (if no placeholders remain)
   if (params && !processedEndpoint.includes('{')) {
